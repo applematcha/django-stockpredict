@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8"><link rel="icon" href="https://jscdn.com.cn/highcharts/images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="/static/css/bootstrap.css" rel="stylesheet">
+
+        <title>基于数据挖掘的证券分析与预测系统</title>
+        <style>
+            /* css 代码  */
+        </style>
+        <script src="https://code.highcharts.com.cn/jquery/jquery-1.8.3.min.js"></script>
+        <script src="https://code.highcharts.com.cn/highstock/highstock.js"></script>
+        <script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+    </head>
+    <body>
+
+    <button type="button" class="btn btn-primary" style="display:block;margin:0 auto"
+            onclick="window.location.href = 'http://127.0.0.1:8000/'">回到主页
+    </button>
+        <div id="container" style="min-width:400px;height:400px"></div>
+        <script>
+            // JS 代码
+            $.getJSON('/static/data.json', function (data) {
+                data = data.data;
+                var ohlc = [],
+                    volume = [],
+                    dataname = data.name
+                    dataLength = data.length,
+                    // set the allowed units for data grouping
+                    i = 0;
+                for (i; i < dataLength; i += 1) {
+                    ohlc.push([
+                        data[i][0], // the date
+                        data[i][1], // open
+                        data[i][2], // high
+                        data[i][3], // low
+                        data[i][4] // close
+                    ]);
+                    volume.push([
+                        data[i][0], // the date
+                        data[i][4] // the volume
+                    ]);
+                }
+	// create the chart
+	Highcharts.stockChart('container', {
+				chart: {
+						zoomType: 'xy'
+				},
+				title: {
+						text: '收盘价缩放图'
+				},
+				subtitle: {
+						text: '请缩放图表后查看滚动条'
+				},
+				yAxis: {
+						scrollbar: {
+								enabled: true,
+								showFull: false
+						}
+				},
+				tooltip: {
+						split: false
+				},
+				series: [{
+						data: volume,
+						pointStart: data.pointStart,
+						pointInterval: data.pointInterval
+				}]
+		});
+});
+        </script>
+
+
+    </body>
+</html>
